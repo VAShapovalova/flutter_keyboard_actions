@@ -89,6 +89,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   int _currentIndex = 0;
   OverlayEntry _overlayEntry;
   double _offset = 0;
+  double _viewInsertHeightStart = 0.0;
   PreferredSizeWidget _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
@@ -156,6 +157,9 @@ class KeyboardActionstate extends State<KeyboardActions>
         hasFocusFound = true;
         _currentAction = currentAction;
         _currentIndex = key;
+        setState(() {
+          _viewInsertHeightStart = MediaQuery.of(context).viewInsets.bottom;
+        });
         return;
       }
     });
@@ -283,7 +287,8 @@ class KeyboardActionstate extends State<KeyboardActions>
           ? _currentAction.footerBuilder(context)
           : null;
       final queryData = MediaQuery.of(context);
-      return Positioned(
+      return _viewInsertHeightStart != MediaQuery.of(context).viewInsets.bottom
+      ? Positioned(
         bottom: queryData.viewInsets.bottom,
         left: 0,
         right: 0,
@@ -318,7 +323,8 @@ class KeyboardActionstate extends State<KeyboardActions>
             ),
           ],
         ),
-      );
+      )
+      : Container();
     });
     os.insert(_overlayEntry);
   }
